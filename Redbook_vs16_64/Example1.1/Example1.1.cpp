@@ -71,10 +71,13 @@ init ( void )
 	fragment_shader = glCreateShader ( GL_FRAGMENT_SHADER );
 	glShaderSource ( fragment_shader, 1, &fragment_shader_text, NULL );
 	glCompileShader ( fragment_shader );
+	
 	program = glCreateProgram ();
 	glAttachShader ( program, vertex_shader );
 	glAttachShader ( program, fragment_shader );
+	glLinkProgram ( program );
 	glUseProgram ( program );
+	
 
 	glBindVertexArray ( VAOs[Triangles] );
 	glBindBuffer ( GL_ARRAY_BUFFER, Buffers[ArrayBuffer] );
