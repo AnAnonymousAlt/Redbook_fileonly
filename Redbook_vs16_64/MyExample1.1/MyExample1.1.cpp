@@ -1,7 +1,8 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
+#include <fstream>
+#include <string>
 using namespace std;
 
 #define BUFFER_OFFSET(a) ((void*)(a))
@@ -25,21 +26,19 @@ GLuint Buffers[NumBuffers];
 const GLuint NumVertices = 6;
 GLuint vertex_shader, fragment_shader, program;
 
-static const char* vertex_shader_text =
-"#version 450 core\n"
-"layout ( location = 0 ) in vec4 vPosition;\n"
-"void main ()\n"
-"{\n"
-"	gl_Position = vPosition;\n"
-"}\n";
+const char *fragment_shader_text, *vertex_shader_text;
 
-static const char* fragment_shader_text =
-"#version 450 core\n"
-"layout (location = 0) out vec4 fColor;\n"
-"void main()\n"
-"{\n"
-"	fColor = vec4(0.5, 0.4, 0.8, 1.0);\n"
-"}\n";
+void readShaders ()
+{
+	ifstream in ( "vertex.glsl" );
+	string vertex_shader_string ( ( istreambuf_iterator<char> ( in ) ), 
+								  istreambuf_iterator<char> () );
+	in = ifstream ( "fragment.glsl" );
+	string fragment_shader_string ( ( istreambuf_iterator<char> ( in ) ),
+								  istreambuf_iterator<char> () );
+	vertex_shader_text = vertex_shader_string.c_str ();
+	fragment_shader_text = fragment_shader_string.c_str ();
+}
 
 //----------------------------
 //
