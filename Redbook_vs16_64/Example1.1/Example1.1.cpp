@@ -6,25 +6,35 @@ using namespace std;
 
 #define BUFFER_OFFSET(a) ((void*)(a))
 
+// Vertex Array Object IDs, 0 is the first one and the last one is size.
 enum VAO_IDs
 {
 	Triangles, NumVAOs
 };
+
+// Buffer IDs
 enum Buffer_IDs
 {
 	ArrayBuffer, NumBuffers
 };
+
+// Attribute IDs
 enum Attrib_IDs
 {
 	vPosition = 0
 };
 
+// Vertex Array Object Array
+// Here we only have one VAO, triangles.
 GLuint VAOs[NumVAOs];
+// Buffer Array
+// only one buffer, ArrayBuffer
 GLuint Buffers[NumBuffers];
 
+// declare verteces (Used in both init and display)
 const GLuint NumVertices = 6;
-GLuint vertex_shader, fragment_shader, program;
 
+// Vertex Shader char array
 static const char* vertex_shader_text =
 "#version 450 core\n"
 "layout ( location = 0 ) in vec4 vPosition;\n"
@@ -33,6 +43,7 @@ static const char* vertex_shader_text =
 "	gl_Position = vPosition;\n"
 "}\n";
 
+// Fragment Shader char array
 static const char* fragment_shader_text =
 "#version 450 core\n"
 "layout (location = 0) out vec4 fColor;\n"
@@ -48,7 +59,7 @@ static const char* fragment_shader_text =
 void
 init ( void )
 {
-
+	// vertices Info
 	static const GLfloat vertice[NumVertices][2] =
 	{
 		{ -0.90,-0.90 }, // Triangle 1
@@ -59,20 +70,22 @@ init ( void )
 		{ -0.85, 0.90 }
 	};
 
+	// Gernerate vertex array object names.
+	// VAOs is the place to store the name
 	glCreateVertexArrays ( NumVAOs, VAOs );
 
 	glCreateBuffers ( NumBuffers, Buffers );
 	glNamedBufferStorage ( Buffers[ArrayBuffer], sizeof ( vertice ), vertice, 0 );
 
-	vertex_shader = glCreateShader ( GL_VERTEX_SHADER );
+	GLuint vertex_shader = glCreateShader ( GL_VERTEX_SHADER );
 	glShaderSource ( vertex_shader, 1, &vertex_shader_text, NULL );
 	glCompileShader ( vertex_shader );
 
-	fragment_shader = glCreateShader ( GL_FRAGMENT_SHADER );
+	GLuint fragment_shader = glCreateShader ( GL_FRAGMENT_SHADER );
 	glShaderSource ( fragment_shader, 1, &fragment_shader_text, NULL );
 	glCompileShader ( fragment_shader );
 	
-	program = glCreateProgram ();
+	GLuint program = glCreateProgram ();
 	glAttachShader ( program, vertex_shader );
 	glAttachShader ( program, fragment_shader );
 	glLinkProgram ( program );
