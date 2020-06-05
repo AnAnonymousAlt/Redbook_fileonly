@@ -4,7 +4,7 @@
 #define _GL_DEF
 #endif // !_GL_DEF
 
-#include <GL/shader_loader.h>
+#include <GL/helper_functions.h>
 
 using namespace std;
 
