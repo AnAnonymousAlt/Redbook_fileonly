@@ -51,7 +51,7 @@ void init ()
 	const char* vertShaderText = vertShaderString.c_str ();
 
 	ifstream inf ( "fragment.glsl" );
-	string fragShaderString = string ( istreambuf_iterator<char> ( inv ), istreambuf_iterator<char> () );
+	string fragShaderString = string ( istreambuf_iterator<char> ( inf ), istreambuf_iterator<char> () );
 	const char* fragShaderText = fragShaderString.c_str ();
 
 	
