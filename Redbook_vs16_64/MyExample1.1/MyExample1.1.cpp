@@ -1,6 +1,9 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
+#include <fstream>
+#include <string>
+
 using namespace std;
 
 enum VAO_ID { Triangles, numVAOs };
@@ -11,7 +14,8 @@ GLuint VAOs[numVAOs];
 GLuint buffers[numBuffers];
 const GLuint numVertices = 3;
 
-static const char* vertexShaderText =
+/*
+static const char* vertShaderText =
 "#version 450 core\n"
 "layout ( location = 0 ) in vec4 vPosition;\n"
 "void main()\n"
@@ -19,11 +23,12 @@ static const char* vertexShaderText =
 "gl_Position = vPosition;\n"
 "}\n";
 
-static const char* fragment_shader_text =
+static const char* fragShaderText =
 "#version 450 core\n"
 "layout ( location = 0 ) out vec4 fColor;\n"
 "void main()\n"
 "{	fColor = vec4 ( 0.5, 0.1, 0.6, 1.0 );	}\n";
+*/
 
 
 void init ()
@@ -39,16 +44,28 @@ void init ()
 	glCreateBuffers ( numBuffers, buffers );
 	glNamedBufferStorage ( buffers[ArrayBuffer], sizeof ( vertices ), &vertices, 0 );
 
-	GLuint vertexShader = glCreateShader ( GL_VERTEX_SHADER );
-	glShaderSource ( vertexShader, 1, &vertexShaderText, NULL);
-	glCompileShader ( vertexShader );
+	
+	// shader loader
+	ifstream inv ( "vertex.glsl" );
+	string vertShaderString = string ( istreambuf_iterator<char> ( inv ), istreambuf_iterator<char> () );
+	const char* vertShaderText = vertShaderString.c_str ();
+
+	ifstream inf ( "fragment.glsl" );
+	string fragShaderString = string ( istreambuf_iterator<char> ( inv ), istreambuf_iterator<char> () );
+	const char* fragShaderText = fragShaderString.c_str ();
+
+	
+	GLuint vertShader = glCreateShader ( GL_VERTEX_SHADER );
+	glShaderSource ( vertShader, 1, &vertShaderText, NULL);
+	glCompileShader ( vertShader );
 
 	GLuint fragShader = glCreateShader ( GL_FRAGMENT_SHADER );
-	glShaderSource ( fragShader, 1, &fragment_shader_text, NULL );
+	glShaderSource ( fragShader, 1, &fragShaderText, NULL );
 	glCompileShader ( fragShader );
+	
 
 	GLuint program = glCreateProgram ();
-	glAttachShader ( program, vertexShader );
+	glAttachShader ( program, vertShader );
 	glAttachShader ( program, fragShader );
 	glLinkProgram ( program );
 	glUseProgram ( program );
@@ -61,8 +78,11 @@ void init ()
 }
 void display ()
 {
-	static const float black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	static const float black[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 	glClearBufferfv ( GL_COLOR, 0, black );
+
+	glBindVertexArray ( VAOs[Triangles] );
+
 	glDrawArrays ( GL_TRIANGLES, 0, numVertices );
 }
 int main ( int argc, char** argv )

@@ -55,7 +55,7 @@ const GLuint NumVertices = 6;
 // layout () is a layout qualifier and provides meta-data for our variable declaration.
 // Here we set the location of vPosition to 0.
 // So as the Attrib_ID of vPosition
-static const char* vertex_shader_text =
+const char* vertex_shader_text =
 "#version 450 core\n"
 "layout ( location = 0 ) in vec4 vPosition;\n"
 "void main ()\n"
@@ -64,7 +64,7 @@ static const char* vertex_shader_text =
 "}\n";
 
 // Fragment Shader char array
-static const char* fragment_shader_text =
+const char* fragment_shader_text =
 "#version 450 core\n"
 "layout (location = 0) out vec4 fColor;\n"
 "void main()\n"
