@@ -4,7 +4,7 @@
 #define _GL_DEF
 #endif // !_GL_DEF
 
-#include "shader_loader.h"
+#include <GL/shader_loader.h>
 
 using namespace std;
 
@@ -72,6 +72,7 @@ void init ()
 	glLinkProgram ( program );
 	glUseProgram ( program );
 	*/
+
 	GLuint program = glCreateProgram ();
 	loadShader ( program );
 	
