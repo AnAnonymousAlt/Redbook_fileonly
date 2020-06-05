@@ -1,8 +1,10 @@
+#ifndef _GL_DEF
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
+#define _GL_DEF
+#endif // !_GL_DEF
 
-#include <fstream>
-#include <string>
+#include "shader_loader.h"
 
 using namespace std;
 
@@ -44,7 +46,7 @@ void init ()
 	glCreateBuffers ( numBuffers, buffers );
 	glNamedBufferStorage ( buffers[ArrayBuffer], sizeof ( vertices ), &vertices, 0 );
 
-	
+	/*
 	// shader loader
 	ifstream inv ( "vertex.glsl" );
 	string vertShaderString = string ( istreambuf_iterator<char> ( inv ), istreambuf_iterator<char> () );
@@ -69,7 +71,10 @@ void init ()
 	glAttachShader ( program, fragShader );
 	glLinkProgram ( program );
 	glUseProgram ( program );
-
+	*/
+	GLuint program = glCreateProgram ();
+	loadShader ( program );
+	
 	glBindVertexArray ( VAOs[Triangles] );
 	glBindBuffer ( GL_ARRAY_BUFFER, buffers[ArrayBuffer] );
 	glVertexAttribPointer ( vPosition, 2, GL_FLOAT, GL_FALSE, 0, ( void* ) 0 );
