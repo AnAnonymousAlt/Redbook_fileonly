@@ -1,126 +1,87 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
-#include <fstream>
-#include <string>
 using namespace std;
 
-#define BUFFER_OFFSET(a) ((void*)(a))
+enum VAO_ID { Triangles, numVAOs };
+enum BUFFER_ID { ArrayBuffer, numBuffers };
+enum ATTRIB_ID { vPosition = 0 };
 
-enum VAO_IDs
+GLuint VAOs[numVAOs];
+GLuint buffers[numBuffers];
+const GLuint numVertices = 3;
+
+static const char* vertexShaderText =
+"#version 450 core\n"
+"layout ( location = 0 ) in vec4 vPosition;\n"
+"void main()\n"
+"{\n"
+"gl_Position = vPosition;\n"
+"}\n";
+
+static const char* fragment_shader_text =
+"#version 450 core\n"
+"layout ( location = 0 ) out vec4 fColor;\n"
+"void main()\n"
+"{	fColor = vec4 ( 0.5, 0.1, 0.6, 1.0 );	}\n";
+
+
+void init ()
 {
-	Triangles, NumVAOs
-};
-enum Buffer_IDs
-{
-	ArrayBuffer, NumBuffers
-};
-enum Attrib_IDs
-{
-	vPosition = 0
-};
-
-GLuint VAOs[NumVAOs];
-GLuint Buffers[NumBuffers];
-
-const GLuint NumVertices = 6;
-GLuint vertex_shader, fragment_shader, program;
-
-const char *fragment_shader_text, *vertex_shader_text;
-
-void readShaders ()
-{
-	ifstream in ( "vertex.glsl" );
-	string vertex_shader_string ( ( istreambuf_iterator<char> ( in ) ), 
-								  istreambuf_iterator<char> () );
-	in = ifstream ( "fragment.glsl" );
-	string fragment_shader_string ( ( istreambuf_iterator<char> ( in ) ),
-								  istreambuf_iterator<char> () );
-	vertex_shader_text = vertex_shader_string.c_str ();
-	fragment_shader_text = fragment_shader_string.c_str ();
-}
-
-//----------------------------
-//
-// Init
-//
-void
-init ( void )
-{
-
-	static const GLfloat vertice[NumVertices][2] =
+	static const GLfloat vertices[numVertices][2] =
 	{
-		{ -0.90,-0.90 }, // Triangle 1
-		{  0.85, -0.90 },
-		{ -0.90, 0.85 },
-		{  0.90, 0.90 }, // Tirangle 2
-		{  0.90, -0.85},
-		{ -0.85, 0.90 }
+		{ -0.5,  0.5 },
+		{ -0.5, -0.5 },
+		{  0.5, -0.5 }
 	};
 
-	glCreateVertexArrays ( NumVAOs, VAOs );
+	glCreateVertexArrays ( numVAOs, VAOs );
+	glCreateBuffers ( numBuffers, buffers );
+	glNamedBufferStorage ( buffers[ArrayBuffer], sizeof ( vertices ), &vertices, 0 );
 
-	glCreateBuffers ( NumBuffers, Buffers );
-	glNamedBufferStorage ( Buffers[ArrayBuffer], sizeof ( vertice ), vertice, 0 );
+	GLuint vertexShader = glCreateShader ( GL_VERTEX_SHADER );
+	glShaderSource ( vertexShader, 1, &vertexShaderText, NULL);
+	glCompileShader ( vertexShader );
 
-	vertex_shader = glCreateShader ( GL_VERTEX_SHADER );
-	glShaderSource ( vertex_shader, 1, &vertex_shader_text, NULL );
-	glCompileShader ( vertex_shader );
+	GLuint fragShader = glCreateShader ( GL_FRAGMENT_SHADER );
+	glShaderSource ( fragShader, 1, &fragment_shader_text, NULL );
+	glCompileShader ( fragShader );
 
-	fragment_shader = glCreateShader ( GL_FRAGMENT_SHADER );
-	glShaderSource ( fragment_shader, 1, &fragment_shader_text, NULL );
-	glCompileShader ( fragment_shader );
-	program = glCreateProgram ();
-	glAttachShader ( program, vertex_shader );
-	glAttachShader ( program, fragment_shader );
+	GLuint program = glCreateProgram ();
+	glAttachShader ( program, vertexShader );
+	glAttachShader ( program, fragShader );
+	glLinkProgram ( program );
 	glUseProgram ( program );
 
 	glBindVertexArray ( VAOs[Triangles] );
-	glBindBuffer ( GL_ARRAY_BUFFER, Buffers[ArrayBuffer] );
-	glVertexAttribPointer ( vPosition, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET ( 0 ) );
+	glBindBuffer ( GL_ARRAY_BUFFER, buffers[ArrayBuffer] );
+	glVertexAttribPointer ( vPosition, 2, GL_FLOAT, GL_FALSE, 0, ( void* ) 0 );
 	glEnableVertexAttribArray ( vPosition );
-}
 
-//------------------------------
-//
-// Display
-//
-void
-display ()
+}
+void display ()
 {
 	static const float black[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glClearBufferfv ( GL_COLOR, 0, black );
-
-	glBindVertexArray ( VAOs[Triangles] );
-
-	glDrawArrays ( GL_TRIANGLES, 0, NumVertices );
+	glDrawArrays ( GL_TRIANGLES, 0, numVertices );
 }
-
-//----------------------------
-//
-// Main
-//
-int
-main ( int argc, char** argv )
+int main ( int argc, char** argv )
 {
 	glfwInit ();
 
-	GLFWwindow* window = glfwCreateWindow ( 640, 480, "Triangles", NULL, NULL );
+	GLFWwindow* window = glfwCreateWindow ( 640, 480, "Triangle", NULL, NULL );
 
 	glfwMakeContextCurrent ( window );
 	gl3wInit ();
 
 	init ();
-
 	while ( !glfwWindowShouldClose ( window ) )
 	{
 		display ();
 		glfwSwapBuffers ( window );
 		glfwPollEvents ();
 	}
-
 	glfwDestroyWindow ( window );
-
 	glfwTerminate ();
 	return 0;
 }
