@@ -1,7 +1,7 @@
 #ifndef _GL_DEF
 
-#include <GLFW/glfw3.h>
 #include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
 
 #define _GL_DEF
 #endif // !_GL_DEF
@@ -32,19 +32,21 @@ const GLint numVertices = 3;
 void
 init ()
 {
+	glClearColor ( 0.0f, 0.0f, 0.1f, 1.0f );
+
 	const GLfloat vertices[numVertices][2] =
 	{
-		{ -0.5, -0.5 },
-		{  0.0, -0.5 },
-		{ -0.5,  0.0 }
+		{ -0.5f, -0.5f },
+		{  0.0f, -0.5f },
+		{ -0.5f,  0.0f }
 	};
 
 	glCreateVertexArrays ( numVAOs, VAOs );
 	glCreateBuffers ( numBuffers, buffers );
-	glNamedBufferData ( buffers[ArrayBuffer], sizeof ( vertices ),
+	glNamedBufferStorage ( buffers[ArrayBuffer], sizeof ( vertices ),
 						&vertices, 0 );
 
-	GLuint program;
+	GLuint program = glCreateProgram ();
 	loadShader ( program );
 
 	// Initialize uniform values in uniform block "myUniform"
@@ -68,14 +70,15 @@ init ()
 	{
 		enum
 		{
-			Red, Green, Blue, Movement, NumUniforms
+			Red, Green, Blue, Movement, Enable, NumUniforms
 		};
 
 		/* Values to be stored in the buffer object */
-		GLfloat red = 0.1;
-		GLfloat green = 0.7;
-		GLfloat blue = 0.1;
-		GLfloat movement = 1.0;
+		GLfloat red = 0.1f;
+		GLfloat green = 0.7f;
+		GLfloat blue = 0.1f;
+		GLfloat movement = 1.0f;
+		GLboolean enable = TRUE;
 
 		/* Since we know the names of the uniforms
 		** in our block, make an array of those values' name */
@@ -84,7 +87,8 @@ init ()
 			"red",
 			"green",
 			"red",
-			"movement"
+			"movement",
+			"enable"
 		};
 		/* Query the necessary attributes to determine
 		** where in the buffer we should write
@@ -111,6 +115,9 @@ init ()
 				 size[Blue] * typeSize ( type[Blue] ) );
 		memcpy ( ( char * ) uboBuffer + offset[Movement], &movement,
 				 size[Movement] * typeSize ( type[Movement] ) );
+		memcpy ( ( char * ) uboBuffer + offset[Enable], &enable,
+				 size[Enable] * typeSize ( type[Enable] ) );
+
 
 		/* Create the uniform buffer object,
 		** initialize its storage, and associated
@@ -125,15 +132,14 @@ init ()
 	glBindVertexArray ( VAOs[Triangles] );
 	glBindBuffer ( GL_ARRAY_BUFFER, buffers[ArrayBuffer] );
 	glVertexAttribPointer ( vPosition, 2, GL_FLOAT, GL_FALSE, 0,
-								 ( void * ) 0 );
+							( void * ) 0 );
 	glEnableVertexAttribArray ( vPosition );
 }
 
 void
 display ()
 {
-	glClearColor ( 0.0, 0.0, 0.1, 1.0 );
-
+	glClear ( GL_COLOR_BUFFER_BIT );
 	glDrawArrays ( GL_TRIANGLES, 0, numVertices );
 }
 
@@ -155,7 +161,7 @@ main ( int argc, char **argv )
 		glfwSwapBuffers ( window );
 		glfwPollEvents ();
 	}
-	
+
 	glfwDestroyWindow ( window );
 	glfwTerminate ();
 	return 0;
