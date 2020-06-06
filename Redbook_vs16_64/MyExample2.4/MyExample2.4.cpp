@@ -16,7 +16,7 @@ enum VAO_ID
 
 enum Buffer_ID
 {
-	ArrayBuffer, numBuffers
+	ArrayBuffer, UniformBuffer, numBuffers
 };
 
 enum ATTRIB_ID
@@ -43,31 +43,33 @@ init ()
 
 	glCreateVertexArrays ( numVAOs, VAOs );
 	glCreateBuffers ( numBuffers, buffers );
-	glNamedBufferStorage ( buffers[ArrayBuffer], sizeof ( vertices ),
-						&vertices, 0 );
+
 
 	GLuint program = glCreateProgram ();
 	loadShader ( program );
-
-	// Initialize uniform values in uniform block "myUniform"
-	GLuint uboIndex;
-	GLint uboSize;
+	
 	GLvoid *uboBuffer;
-	GLuint ubo;
 
-	// Find the uniform buffer index for "Uniforms", and
-	// determine the block's sizes
-	uboIndex = glGetUniformBlockIndex ( program, "myUniform" );
-	glGetActiveUniformBlockiv ( program, uboIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &uboSize );
 
-	uboBuffer = malloc ( uboSize );
-
-	if ( uboBuffer == NULL )
+	// Allocate uniform buffer
 	{
-		fprintf ( stderr, "Unable to allocate buffer\n" );
-		exit ( EXIT_FAILURE );
-	} else
-	{
+		// Initialize uniform values in uniform block "myUniform"
+		GLuint uboIndex;
+		GLint uboSize;
+
+		// Find the uniform buffer index for "Uniforms", and
+		// determine the block's sizes
+		uboIndex = glGetUniformBlockIndex ( program, "myUniform" );
+		glGetActiveUniformBlockiv ( program, uboIndex, GL_UNIFORM_BLOCK_DATA_SIZE, &uboSize );
+
+		uboBuffer = malloc ( uboSize );
+
+		if ( uboBuffer == NULL )
+		{
+			fprintf ( stderr, "Unable to allocate buffer\n" );
+			exit ( EXIT_FAILURE );
+		}
+
 		enum
 		{
 			Red, Green, Blue, Movement, Enable, NumUniforms
@@ -122,13 +124,13 @@ init ()
 		/* Create the uniform buffer object,
 		** initialize its storage, and associated
 		** it with the shader program */
-		glGenBuffers ( 1, &ubo );
-		glBindBuffer ( GL_UNIFORM_BUFFER, ubo );
-		glBufferData ( GL_UNIFORM_BUFFER, uboSize, uboBuffer,
-					   GL_STATIC_DRAW );
-		glBindBufferBase ( GL_UNIFORM_BUFFER, uboIndex, ubo );
+		glNamedBufferStorage ( buffers[UniformBuffer], uboSize, uboBuffer, 0 );
+		glBindBuffer ( GL_UNIFORM_BUFFER, buffers[UniformBuffer] );
+		glBindBufferBase ( GL_UNIFORM_BUFFER, uboIndex, buffers[UniformBuffer] );
 	}
 
+	glNamedBufferStorage ( buffers[ArrayBuffer], sizeof ( vertices ),
+						   &vertices, 0 );
 	glBindVertexArray ( VAOs[Triangles] );
 	glBindBuffer ( GL_ARRAY_BUFFER, buffers[ArrayBuffer] );
 	glVertexAttribPointer ( vPosition, 2, GL_FLOAT, GL_FALSE, 0,
