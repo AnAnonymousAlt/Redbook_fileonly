@@ -68,7 +68,8 @@ init ()
 		glGetActiveUniformsiv ( program, NumUniforms, indices, GL_UNIFORM_TYPE, type );
 
 		/* copy the uniform values into the buffer */
-		memcpy ( uboBuffer + offset)
+		memcpy ( uboBuffer + offset[Red], &red, size[Red] * typeSize ( type[Red] ) );
+
 
 
 	}
