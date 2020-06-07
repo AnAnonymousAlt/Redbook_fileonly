@@ -2,11 +2,11 @@
 
 uniform myUniform 
 {
-	float red;
-	float green;
 	float blue;
+	bool enabled;
+	float green;
 	float movement;
-	bool enable;
+	float red;
 };
 
 layout ( location = 0 ) out vec4 fColor;
@@ -14,12 +14,15 @@ layout ( location = 0 ) out vec4 fColor;
 void
 main () 
 {
-	if ( enable ) 
+	float t = movement;
+
+	vec4 cgreen = vec4 ( 0.0, 0.5, 0.0, 1.0 );
+	if ( enabled ) 
 	{
 		fColor = vec4 ( red, green, blue, 1.0 );
 	} 
 	else 
 	{
-		fColor = vec4 ( 0.0, 0.0, 1.0, 1.0 );
+		fColor = cgreen;
 	}
 }
