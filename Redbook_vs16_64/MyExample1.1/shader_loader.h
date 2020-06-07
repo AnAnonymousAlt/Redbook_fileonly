@@ -11,17 +11,20 @@
 #include <string>
 
 
-
+/// <summary>
+/// my shader loader
+/// </summary>
+/// <param name="program">the shader program</param>
 inline void loadShader ( GLuint program )
 {
-	// Read vertex shader file
+	// Read vertex shader source code
 	std::ifstream inv ( "vertex.glsl" );
 	std::string vertShaderString = std::string (
 		std::istreambuf_iterator<char> ( inv ),
 		std::istreambuf_iterator<char> () );
 	const char *vertShaderText = vertShaderString.c_str ();
 
-	// Read fragment shader file
+	// Read fragment shader source code 
 	std::ifstream inf ( "fragment.glsl" );
 	std::string fragShaderString = std::string (
 		std::istreambuf_iterator<char> ( inf ),
@@ -30,12 +33,25 @@ inline void loadShader ( GLuint program )
 
 	// Create a shader object
 	GLuint vertShader = glCreateShader ( GL_VERTEX_SHADER );
-	// Replace the source code in a shader object
+	// Associate the source code of the shader with the object
 	// 1 is the number of string array at argument 3
 	// NULL is the array of string length
 	glShaderSource ( vertShader, 1, &vertShaderText, NULL );
-	// Compile a shader object
+	// Compile a shader object's source
 	glCompileShader ( vertShader );
+
+	// Determine if the compilation finished successfully
+	GLint vertStatues;
+	glGetShaderiv ( vertShader, GL_COMPILE_STATUS, &vertStatues );
+	if ( vertStatues == GL_FALSE )
+	{
+		GLint logLength;
+		glGetShaderiv ( vertShader, GL_INFO_LOG_LENGTH, &logLength );
+		char *errorLog = ( char * ) malloc ( ( size_t ) logLength );
+		glGetShaderInfoLog ( vertShader, logLength, NULL, errorLog );
+		printf ( "%s\n", errorLog );
+		exit ( EXIT_FAILURE );
+	}
 
 	// Same thing as the vertex shader
 	GLuint fragShader = glCreateShader ( GL_FRAGMENT_SHADER );
