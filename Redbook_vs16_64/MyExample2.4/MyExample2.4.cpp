@@ -90,10 +90,10 @@ init ()
 		/* Values to be stored in the buffer object */
 		GLfloat blue = 0.0f;
 		// Don't know why boolean doesn't work
-		GLfloat enabled = 0.0f;
+		GLboolean enabled = GL_TRUE;
 		GLfloat green = 0.0f;
-		GLfloat movement = 0.0f;
-		GLfloat red = 0.0f;
+		GLfloat movement = 1.0f;
+		GLfloat red = 0.7f;
 
 
 		/* Since we know the names of the uniforms

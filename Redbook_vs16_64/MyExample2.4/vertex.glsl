@@ -17,10 +17,9 @@ layout ( location = 0 ) in vec4 vPosition;
 void
 main () 
 {
-	bool is_enabled = enabled;
-	vec4 ( red, green, blue, 0.0);
 	vec4 backward = vec4 ( -0.4, -0.4, 0.0, 0.0 );
-	if (is_enabled) {
+
+	if (enabled) {
 		gl_Position = vPosition + vec4 ( vec2 ( movement ), 0.0, 0.0 );
 	}
 	else {
