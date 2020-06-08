@@ -28,6 +28,8 @@ Basicly, it is a place to store state info.
 Basically Vertex Array Objects encapsulate vertex array state in OpenGL 3.0. Beginning with OpenGL 3.1 (in lieu of GL_ARB_compatibility) and OpenGL 3.2+ Core profiles, you must have a non-zero VAO bound at all times for commands like glVertexAttribPointer (...) or glDrawArrays (...) to function. The bound VAO forms the necessary context for these commands, and stores the state persistently."
 https://stackoverflow.com/a/21652930
 */
+// Vertex array objects contain information about /
+// where data is located and how it is laid out.
 enum VAO_ID
 {
 	Triangles, numVAOs
