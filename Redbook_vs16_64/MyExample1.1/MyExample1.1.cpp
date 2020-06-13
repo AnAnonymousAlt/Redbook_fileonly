@@ -149,13 +149,15 @@ void init ()
 	// Here makes the Buffers[ArrayBuffer] the current vertex attribute
 	// Input to vertex shader
 	glBindBuffer ( GL_ARRAY_BUFFER, buffers[ArrayBuffer] );
-	// Define a generic vertex attribute data by index in the array
-	// Tell the server how to specify how the bound buffer should be decoded
-	// 2 is the number of values for each vertex in our array
-	// FALSE is because that we don't want to constrain it to [-1, 1], either we use float instead of int here
-	// 0 is for 0 interval between values
-	// last argument is 0 because the value starts at the first location
-	// There is an active array as the activate VAO and buffer
+	/* Specifies where the data values for the vertex attribute with specific location can be accessed. */
+	/* Tell the server how to specify how the bound buffer should be decoded */
+	// vPosition is the location where the data stored
+	// 2 (size) represents the number of components to be updated be updated per vertex (1,2,3,4)
+	// GL_FLOAT specifies teh data type of each element in the array
+	// FALSE indicates that the vertex data should NOT be normalized before being presented to the vertex shader
+	// 0 is the byte offset between consecutive elements in the array
+	// bufferOffset (0) is the offset in basic-machine units(i.e., byte) from the start of the buffer object currently bound to the GL_ARRAY_BUFFER target for the first set of values in the array
+	/* The state set by glVertexAttribPointer() is tored in the currently bound vertex array boject (VAO). */
 	glVertexAttribPointer ( vPosition, 2, GL_FLOAT, GL_FALSE, 
 							0, bufferOffset ( 0 ) );
 	// Enable a generic vertex attribute specified by index
