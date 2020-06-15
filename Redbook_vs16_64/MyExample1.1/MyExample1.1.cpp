@@ -10,7 +10,8 @@
 
 using namespace std;
 
-// constexpr, substitue #DEFINE
+// constexpr, 
+stitue #DEFINE
 // a void pointer for buffer offset
 constexpr void *bufferOffset ( int a )
 {
